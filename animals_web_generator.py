@@ -98,9 +98,13 @@ def main():
         animal_name = input("Enter a name of an animal: ")
 
         data = load_animals(animal_name)
-        template = load_template()
 
-        animals_info = create_animals_info(data)
+        if not data:
+            animals_info = f"<h2>The animal '{animal_name}' does not exist.</h2>"
+        else:
+            animals_info = create_animals_info(data)
+
+        template = load_template()
         html = create_html(template, animals_info)
 
         save_html(html)
