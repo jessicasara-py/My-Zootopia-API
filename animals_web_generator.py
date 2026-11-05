@@ -1,10 +1,34 @@
-import json
+import requests
+import os
 
 
 def load_animals():
-    """Load animal data from the JSON file."""
-    with open("animals_data.json", "r", encoding="utf-8") as file:
-        return json.load(file)
+    """Load animal data from the API."""
+
+    API_KEY = os.getenv("API_NINJAS_KEY")
+    URL = "https://api.api-ninjas.com/v1/animals"
+
+    if not API_KEY:
+        raise RuntimeError("API key is missing.")
+
+    headers = {
+        "X-Api-Key": API_KEY
+    }
+
+    params = {
+        "name": "Fox"
+    }
+
+    response = requests.get(
+        URL,
+        headers=headers,
+        params=params,
+        timeout=10
+    )
+
+    response.raise_for_status()
+
+    return response.json()
 
 
 def load_template():
@@ -84,11 +108,11 @@ def main():
     except FileNotFoundError as error:
         print(f"File not found: {error.filename}")
 
-    except json.JSONDecodeError as error:
-        print(
-            "Error: The file 'animals_data.json' contains invalid data. "
-            "Please check that the file contains valid JSON."
-        )
+    except requests.exceptions.RequestException as error:
+        print(f"API request failed: {error}")
+
+    except RuntimeError as error:
+        print(error)
 
     except PermissionError:
         print("Error: Permission denied.")
