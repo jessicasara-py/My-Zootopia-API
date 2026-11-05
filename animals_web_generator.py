@@ -2,7 +2,7 @@ import requests
 import os
 
 
-def load_animals():
+def load_animals(animal_name):
     """Load animal data from the API."""
 
     API_KEY = os.getenv("API_NINJAS_KEY")
@@ -16,7 +16,7 @@ def load_animals():
     }
 
     params = {
-        "name": "Fox"
+        "name": animal_name
     }
 
     response = requests.get(
@@ -95,7 +95,9 @@ def save_html(html):
 
 def main():
     try:
-        data = load_animals()
+        animal_name = input("Enter a name of an animal: ")
+
+        data = load_animals(animal_name)
         template = load_template()
 
         animals_info = create_animals_info(data)
@@ -109,7 +111,10 @@ def main():
         print(f"File not found: {error.filename}")
 
     except requests.exceptions.RequestException as error:
-        print(f"API request failed: {error}")
+        print(
+            "Sorry, we couldn't connect to the animal database. "
+            "Please check your internet connection and try again."
+        )
 
     except RuntimeError as error:
         print(error)
