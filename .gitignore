@@ -6,6 +6,9 @@ __pycache__/
 .venv/
 venv/
 
+# Umgebungsvariablen
+.env
+
 # PyCharm
 .idea/
 
