@@ -1,34 +1,4 @@
-import requests
-import os
-
-
-def load_animals(animal_name):
-    """Load animal data from the API."""
-
-    API_KEY = os.getenv("API_NINJAS_KEY")
-    URL = "https://api.api-ninjas.com/v1/animals"
-
-    if not API_KEY:
-        raise RuntimeError("API key is missing.")
-
-    headers = {
-        "X-Api-Key": API_KEY
-    }
-
-    params = {
-        "name": animal_name
-    }
-
-    response = requests.get(
-        URL,
-        headers=headers,
-        params=params,
-        timeout=10
-    )
-
-    response.raise_for_status()
-
-    return response.json()
+import data_fetcher
 
 
 def load_template():
@@ -97,7 +67,7 @@ def main():
     try:
         animal_name = input("Enter a name of an animal: ")
 
-        data = load_animals(animal_name)
+        data = data_fetcher.fetch_data(animal_name)
 
         if not data:
             animals_info = f"<h2>The animal '{animal_name}' does not exist.</h2>"
@@ -114,7 +84,7 @@ def main():
     except FileNotFoundError as error:
         print(f"File not found: {error.filename}")
 
-    except requests.exceptions.RequestException as error:
+    except data_fetcher.DataFetchError:
         print(
             "Sorry, we couldn't connect to the animal database. "
             "Please check your internet connection and try again."
